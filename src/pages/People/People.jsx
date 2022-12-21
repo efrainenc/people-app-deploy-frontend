@@ -1,142 +1,158 @@
-import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'
+
+import React from 'react'
+import {useState, useEffect} from 'react'
+import { Link } from "react-router-dom";
 import './people.css'
 
-
-const People = (props) => {
-  
-const [people, setPeople] = useState([])
-const [newForm, setNewForm] = useState({
+const People= (props)=> 
+{
+  const [people, setPeople] = useState([]);
+  const [newForm, setNewForm] = useState({
     name: "",
-    image: "",
+    // image: "",
     title: "",
-})
-const BASE_URL = "http://localhost:4000/people"
-const getPeople = async () => {
-    try {
-        const response = await fetch(BASE_URL)
-        const allPeople = await response.json()
-        setPeople(allPeople)
-    } catch (error) {
-        console.log(error)
+  });
+
+  // API URL
+  const BASE_URL= "http://localhost:4000/people";
+
+  // Use People function to call in useEffect
+  const getPeople= async()=>
+  {
+    try
+    {
+      const res= await fetch(BASE_URL)
+      const allPeople= await res.json()
+      setPeople(allPeople)
+    }catch(err)
+    {
+      console.log(err)
     }
-}
-const handleChange = (e) => {
-    const userInput = { ...newForm }
-    userInput[e.target.name] = e.target.value
-    setNewForm(userInput)
-}
-const handleSubmit = async (e) => {
+  }
+
+  // Handlers
+  const handleChange= (e)=>
+  {
+    setNewForm({ ...newForm, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit= async(e)=>
+  {
+    // 0. prevent default (event object method)
     e.preventDefault()
-    const currentState = { ...newForm }
-    try {
-        const requestedOptions = {
-            method: "POST",
+    // 1. capturing our local state
+    const currentState = {...newForm}
+    // check any fields for property data types / truthy value (function call - stretch)
+    try{
+        const requestOptions = {
+            method: "POST", 
             headers: {
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(currentState)
-        }
-        const response = await fetch(BASE_URL,)
+        } 
+        // 2. specify request method , headers, Content-Type
+        // 3. make fetch to BE - sending data (requestOptions)
+
+        // 3a fetch sends the data to API - (mongo)
+        const response = await fetch(BASE_URL, requestOptions);
+        // 4. check our response - 
+        // 5. parse the data from the response into JS (from JSON) 
         const createdPerson = await response.json()
-        console.log(response)
-        setPeople([...people, createdPerson ])
+        console.log(createdPerson)
+        // update local state with response (json from be)
+        setPeople([...people, createdPerson])
+        // reset newForm state so that our form empties out
         setNewForm({
             name: "",
             image: "",
-            type: "",
+            title: "",
         })
-    } catch (error) {
-        console.error(error)
+
+    }catch(err) {
+        console.log(err)
     }
-}
-const loaded = () => {
-    return (<>
-        <section className="people-list">
-            {people?.map((person) => {
-                return (
-                    <Link key={person._id} to={`/people/${person._id}`}>
-                    <div>
-                        {/* React optimization / difference */}
-                        <h1>{person.name}</h1>
-                        <h3>{person.title}</h3>
-                    </div>
-                    </Link>
-                )
-            })
-            }
-        </section>
-    </>
+  }
+
+
+  // People are Loaded
+  const loaded = () =>
+  {
+    return (
+      <>
+      <section>
+        <h2>Create a new person</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+            Name
+            <input 
+              type='text' 
+              name='name' 
+              placeholder="name"
+              value={newForm.name}
+              onChange={handleChange}
+            />
+          </label>
+          {/* <label>
+            <input
+              type="text"
+              value={newForm.image}
+              name="image"
+              placeholder="img url"
+              onChange={handleChange}
+            />
+          </label> */}
+          <label>
+            <input
+              type="text"
+              value={newForm.title}
+              name="title"
+              placeholder="title"
+              onChange={handleChange}
+            />
+          </label>
+          <input type="submit" value="Create Person" />
+        </form>
+      </section>
+      <section className='people-list'>
+        {people?.map((person) =>
+          {
+            return(
+              <div key={person._id} className='person-card'>
+                <Link to={`/people/${person._id}`}>
+                  <h1>{person.name}</h1>
+                </Link>
+                <img src={person.image} alt={person.name}  width={200}/>
+                <h3>{person.title}</h3>
+               </div>
+            );
+          })
+        }
+      </section>
+      </>
     )
-}
-const loading = () => (
-    <section className="people-list">
-        <h1>
-            Loading...
-            <span>
-                {" "}
-                <img
-                    className="spinner"
-                    src="https://freesvg.org/img/1544764567.png"
-                />
-            </span>
-        </h1>
+  };
+
+  // Loading
+  const loading = () => (
+    <section className="loading">
+      <h1>
+        Loading...
+        <span>
+          <img
+            className="spinner"
+            src="https://freesvg.org/img/1544764567.png"
+          />{" "}
+        </span>
+      </h1>
     </section>
-);
-useEffect(() => {
-    getPeople()
-}, [])
-return (
-    <div>
-        <section>
-            <h2>Create a new person</h2>
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor='name'>
-                        Name
-                        <input
-                            type="text"
-                            id="name"
-                            name="name"
-                            placeholder="enter a person's name"
-                            value={newForm.name}
-                            onChange={handleChange}
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label htmlFor='image'>
-                        Image
-                        <input
-                            type="text"
-                            id="image"
-                            name="image"
-                            placeholder="enter a person's image"
-                            value={newForm.image}
-                            onChange={handleChange}
-                        />
-                    </label>
-                </div>
-                <div>
-                    <label htmlFor='title'>
-                        Title
-                        <input
-                            type="text"
-                            id="title"
-                            name="title"
-                            placeholder="enter a person's title"
-                            value={newForm.title}
-                            onChange={handleChange}
-                        />
-                    </label>
-                    <br />
-                    <input type="submit" value="Create a new person" />
-                </div>
-            </form>
-        </section>
-        {people && people.length ? loaded() : loading()}
-    </div >
-)
+  );
+
+  useEffect(()=>{getPeople()}, [])
+
+  return (
+    <section className="people-list">{people && people.length ? loaded() : loading()}</section>
+  );
 }
 
 export default People
