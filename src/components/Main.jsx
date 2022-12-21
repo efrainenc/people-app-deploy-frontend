@@ -1,7 +1,7 @@
 import React from 'react'
 import {Routes, Route} from 'react-router-dom'
-import People from '../pages/People/People'
 import Show from '../pages/Show/Show'
+import People from '../pages/People/People'
 
 const Main = () => {
   return (
