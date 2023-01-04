@@ -1,6 +1,8 @@
 import React from 'react'
 import { useState, useEffect } from "react"
 import { Navigate, useParams, useNavigate } from "react-router-dom"
+import { getUserToken } from '../../utils/authToken'
+
 
 
 const Show= (props)=>
@@ -45,7 +47,9 @@ const Show= (props)=>
       const options= // configure put request
       {
         method: "PUT",
-        headers: {"Content-Type": "application/json"},
+        headers: {
+          'Authorization': `bearer ${getUserToken()}`,
+          "Content-Type": "application/json"},
         body: JSON.stringify(editForm),
       }
       const response= await fetch(URL, options);
@@ -66,7 +70,9 @@ const Show= (props)=>
     {
       const options= // configure delete request
       {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+          'Authorization': `bearer ${getUserToken()}`},
       }
       const response= await fetch(URL, options);
       const deletedPerson= await response.json();

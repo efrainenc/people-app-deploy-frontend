@@ -3,6 +3,7 @@ import React from 'react'
 import {useState, useEffect} from 'react'
 import { Link } from "react-router-dom";
 import './people.css'
+import { getUserToken } from '../../utils/authToken';
 
 const People= (props)=> 
 {
@@ -15,6 +16,9 @@ const People= (props)=>
 
   // API URL
   const BASE_URL= "http://localhost:4000/people";
+
+
+
 
   // Use People function to call in useEffect
   const getPeople= async()=>
@@ -47,6 +51,7 @@ const People= (props)=>
         const requestOptions = {
             method: "POST", 
             headers: {
+                'Authorization': `bearer ${getUserToken()}`,
                 "Content-Type": "application/json"
             },
             body: JSON.stringify(currentState)

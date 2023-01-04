@@ -11,5 +11,5 @@ const clearUserToken = () => {
 return localStorage.setItem('token', "")
 }
 
-export {getUserToken,setUserToken, clearUserToken}
+export {getUserToken, setUserToken, clearUserToken}
 

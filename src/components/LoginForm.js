@@ -2,14 +2,14 @@ import React from 'react'
 import {useState} from 'react'
 import  {useNavigate} from 'react-router-dom'
 
-const RegisterForm = ({signup}) => {
+const LoginForm = ({login}) => {
   const initialState = { username: "", password: ""}
   const [input, setInput] = useState(initialState)
 	const navigate = useNavigate()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    const createdUserToken = await signup(input)
+    const createdUserToken = await login(input)
 
     if (createdUserToken) {
       navigate("/people")
@@ -25,7 +25,7 @@ const RegisterForm = ({signup}) => {
 
   return (
     <>
-      <h1>Register</h1>
+      <h1>Login</h1>
       <form onSubmit={handleSubmit}>
         <label htmlFor="username">Name: </label>
         <input
@@ -45,10 +45,10 @@ const RegisterForm = ({signup}) => {
         />
         <br />
         <br />
-        <input type="submit" value="Sign Up" />
+        <input type="submit" value="login" />
       </form>
     </>
   );
 };
 
-export default RegisterForm;
+export default LoginForm;
